@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Music</string>
+    <string name="your_playlist">Your Playlist</string>
+    <string name="album_art">Album Art</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="repeat_shuffle">Repeat/Shuffle</string>
+    <string name="sort">Sort</string>
+    <string name="repeat">Repeat</string>
+    <string name="repeat_all">Repeat All</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="sort_by_title">Sort by Title</string>
+    <string name="sort_by_artist">Sort by Artist</string>
+    <string name="sort_by_album">Sort by Album</string>
+    <string name="sort_by_duration">Sort by Duration</string>
+    <string name="song_title">Song Title</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Theme Colors -->
+    <color name="primary">#0A3D2F</color>          <!-- Dark Phthalo Green -->
+    <color name="primary_variant">#0B4D3C</color>  <!-- Slightly lighter Phthalo Green -->
+    <color name="secondary">#1A8C6F</color>        <!-- Bright Phthalo Green -->
+    <color name="secondary_variant">#2BAF8F</color><!-- Light Phthalo Green -->
+    
+    <!-- Background Colors - IDE Style -->
+    <color name="background">#1E1E1E</color>       <!-- IDE Editor Background -->
+    <color name="surface">#252526</color>          <!-- IDE Sidebar Background -->
+    <color name="card_background">#28282A</color>  <!-- IDE Panel Background -->
+    
+    <!-- Glass Effect Colors -->
+    <color name="glass">#1AFFFFFF</color>          <!-- Semi-transparent white -->
+    <color name="glass_dark">#0DFFFFFF</color>     <!-- More transparent white -->
+    <color name="glass_border">#33FFFFFF</color>   <!-- Semi-transparent border -->
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#FFFFFF</color>     <!-- White text -->
+    <color name="text_secondary">#B3FFFFFF</color> <!-- 70% white text -->
+    <color name="text_hint">#80FFFFFF</color>      <!-- 50% white text -->
+    
+    <!-- Accent Colors -->
+    <color name="accent">#00E676</color>           <!-- Bright accent green -->
+    <color name="error">#CF6679</color>            <!-- Error red -->
+    
+    <!-- System Colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>
