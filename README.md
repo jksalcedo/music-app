@@ -25,15 +25,6 @@ This Android application allows users to play locally stored music files on thei
 *   **Background Playback:** Continues playing music even when the app is in the background or the screen is off.
 *   **Dynamic Album Art:** Uses placeholder album art if original art is missing.
 
-
-### Project Structure
-
-- `app/`: Main Android application source code (Kotlin).
-- `.idea/`, `.kotlin/`: Project and IDE configuration folders.
-- `build.gradle.kts`, `settings.gradle.kts`: Kotlin-based Gradle build scripts.
-- `gradle/`, `gradlew`, `gradlew.bat`, `gradle.properties`: Gradle wrapper and configuration files.
-- `.gitignore`: Standard Git ignore rules.
-
 To explore all files and directories, visit the [repository contents](https://github.com/jksalcedo/music-app/tree/main).
 
 ## Getting Started
