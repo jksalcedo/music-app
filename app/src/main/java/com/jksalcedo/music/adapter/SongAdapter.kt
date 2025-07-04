@@ -21,6 +21,7 @@ class SongAdapter(
     private val context: Context,
     private var songs: List<Song> = emptyList(),
     private val onSongClick: (Song) -> Unit,
+    private val onSongLongClick: ((Song) -> Unit)? = null,
     private var selectedPosition: Int = RecyclerView.NO_POSITION
 ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
@@ -61,6 +62,16 @@ class SongAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     onSongClick(songs[position])
                     (itemView.context as? MainActivity)?.songAdapter?.setSelectedPosition(position)
+                }
+            }
+            
+            itemView.setOnLongClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onSongLongClick?.invoke(songs[position])
+                    true
+                } else {
+                    false
                 }
             }
         }
