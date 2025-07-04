@@ -9,7 +9,10 @@ This Android application allows users to play locally stored music files on thei
 *   **Local Music Playback:** Plays audio files (MP3, WAV, etc.) stored on the user's device.
 *   **Playlist Management:**
     *   View all available songs.
-    *   Create and manage playlists (Future Feature).
+    *   Create and manage custom playlists.
+    *   Add/remove songs to/from playlists.
+    *   Switch between different playlists.
+    *   Rename and delete playlists.
 *   **Persistent Music Controls:**
     *   Notification controls (Play, Pause, Next, Previous).
     *   Lock screen controls (via notification).
@@ -50,16 +53,27 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Usage
 
+### Basic Music Playback
 1.  Grant necessary permissions (e.g., Read External Storage) when prompted.
 2.  The app will scan and display music files from your device.
 3.  Tap on a song to start playing.
 4.  Use the player controls at the bottom (or in the notification) to manage playback.
 5.  Explore sorting options for your playlist.
 
+### Playlist Management
+1.  **Creating Playlists**: Tap the floating action button (➕) to create a new playlist.
+2.  **Adding Songs to Playlists**: Long-press any song to add it to an existing playlist.
+3.  **Switching Playlists**: Tap the playlist icon (🎵) next to the sort button to switch between playlists.
+4.  **Managing Playlists**: 
+    - Use the "Manage Playlists" option in the playlist selection dialog
+    - Rename playlists by selecting "Rename" in the playlist options
+    - Delete playlists by selecting "Delete" in the playlist options
+5.  **Default Playlist**: "All Songs" shows all music on your device and cannot be modified.
+
 ## Known Limitations
 
 *   Currently only supports local music playback; no streaming features.
-*   Playlist creation and editing might be basic or a future feature.
+*   Basic playlist management is now available with creation, editing, and song management features.
 *   The `playNext()` and `playPrevious()` in the `MusicService` are currently reliant on `MainActivity` for the core logic of selecting the actual next/previous song.
 
 ## Tech Stack

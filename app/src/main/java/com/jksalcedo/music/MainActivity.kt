@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jksalcedo.music.adapter.SongAdapter
-import com.jksalcedo.music.adapter.PlaylistAdapter
 import com.jksalcedo.music.databinding.ActivityMainBinding
 import com.jksalcedo.music.model.Song
 import com.jksalcedo.music.model.Playlist
@@ -25,17 +24,9 @@ import com.jksalcedo.music.service.MusicService
 import com.jksalcedo.music.util.AlbumArtManager
 import com.jksalcedo.music.util.PlaylistManager
 import androidx.core.net.toUri
-import android.app.AlertDialog
-import android.content.Context
-import android.util.AttributeSet
 import android.view.View
-import android.widget.ImageButton
-import androidx.appcompat.widget.AppCompatImageButton
-import androidx.transition.Visibility
-import com.jksalcedo.music.R
 import androidx.transition.TransitionManager
 import android.widget.EditText
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
