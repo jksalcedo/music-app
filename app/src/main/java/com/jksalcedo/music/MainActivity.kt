@@ -17,10 +17,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jksalcedo.music.adapter.SongAdapter
+import com.jksalcedo.music.adapter.PlaylistAdapter
 import com.jksalcedo.music.databinding.ActivityMainBinding
 import com.jksalcedo.music.model.Song
+import com.jksalcedo.music.model.Playlist
 import com.jksalcedo.music.service.MusicService
 import com.jksalcedo.music.util.AlbumArtManager
+import com.jksalcedo.music.util.PlaylistManager
 import androidx.core.net.toUri
 import android.app.AlertDialog
 import android.content.Context
@@ -31,14 +34,20 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.transition.Visibility
 import com.jksalcedo.music.R
 import androidx.transition.TransitionManager
+import android.widget.EditText
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var songAdapter: SongAdapter
+    private lateinit var playlistManager: PlaylistManager
     private var musicService: MusicService? = null
     private var currentSong: Song? = null
     private var songs: List<Song> = emptyList()
+    private var currentPlaylist: Playlist? = null
     private var currentSongIndex = -1
+    private var isPlaylistMode = false
     private val handler = Handler(Looper.getMainLooper())
     private val updateProgressRunnable = object : Runnable {
         override fun run() {
@@ -113,6 +122,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        playlistManager = PlaylistManager(this)
+        currentPlaylist = Playlist.createAllSongsPlaylist()
+        
         setupRecyclerView()
         setupClickListeners()
         setupProgressSlider()
@@ -133,6 +145,9 @@ class MainActivity : AppCompatActivity() {
             songs = songs,
             onSongClick = { song ->
                 playSong(song)
+            },
+            onSongLongClick = { song ->
+                showAddToPlaylistDialog(song)
             }
         )
         binding.playlistRecyclerView.apply {
@@ -167,6 +182,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.sortButton.setOnClickListener {
             showSortDialog()
+        }
+
+        binding.playlistsButton.setOnClickListener {
+            showPlaylistDialog()
+        }
+
+        binding.createPlaylistFab.setOnClickListener {
+            showCreatePlaylistDialog()
         }
     }
 
@@ -307,6 +330,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         this.songs = loadedSongs
+        updateCurrentPlaylistTitle()
         sortAndDisplaySongs()
     }
 
@@ -395,11 +419,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sortAndDisplaySongs() {
+        val currentSongs = currentPlaylist?.let { playlist ->
+            playlistManager.getPlaylistSongs(playlist.id, songs)
+        } ?: songs
+        
+        sortAndDisplaySongs(currentSongs)
+    }
+
+    private fun sortAndDisplaySongs(songsToSort: List<Song>) {
         val sorted = when (sortMode) {
-            SortMode.TITLE -> songs.sortedBy { it.title.lowercase() }
-            SortMode.ARTIST -> songs.sortedBy { it.artist.lowercase() }
-            SortMode.ALBUM -> songs.sortedBy { it.album.lowercase() }
-            SortMode.DURATION -> songs.sortedBy { it.duration }
+            SortMode.TITLE -> songsToSort.sortedBy { it.title.lowercase() }
+            SortMode.ARTIST -> songsToSort.sortedBy { it.artist.lowercase() }
+            SortMode.ALBUM -> songsToSort.sortedBy { it.album.lowercase() }
+            SortMode.DURATION -> songsToSort.sortedBy { it.duration }
         }
         songAdapter.updateSongs(sorted)
         
@@ -476,7 +508,171 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showPlaylistDialog() {
+        val playlists = playlistManager.playlists
+        val playlistNames = playlists.map { it.name }.toTypedArray()
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_playlist)
+            .setItems(playlistNames) { _, which ->
+                switchToPlaylist(playlists[which])
+            }
+            .setNeutralButton(R.string.manage_playlists) { _, _ ->
+                showManagePlaylistsDialog()
+            }
+            .show()
+    }
+
+    private fun showCreatePlaylistDialog() {
+        val editText = EditText(this).apply {
+            hint = getString(R.string.enter_playlist_name)
+            setPadding(64, 32, 64, 32)
+        }
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.create_playlist)
+            .setView(editText)
+            .setPositiveButton(R.string.create) { _, _ ->
+                val name = editText.text.toString().trim()
+                if (name.isNotEmpty()) {
+                    val playlist = playlistManager.createPlaylist(name)
+                    Toast.makeText(this, R.string.playlist_created, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun showAddToPlaylistDialog(song: Song) {
+        val playlists = playlistManager.playlists.filter { it.id != Playlist.ALL_SONGS_PLAYLIST_ID }
+        if (playlists.isEmpty()) {
+            Toast.makeText(this, "Create a playlist first", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val playlistNames = playlists.map { it.name }.toTypedArray()
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.add_to_playlist)
+            .setItems(playlistNames) { _, which ->
+                val success = playlistManager.addSongToPlaylist(playlists[which].id, song.id)
+                if (success) {
+                    Toast.makeText(this, R.string.song_added_to_playlist, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun showManagePlaylistsDialog() {
+        val playlists = playlistManager.playlists.filter { it.id != Playlist.ALL_SONGS_PLAYLIST_ID }
+        if (playlists.isEmpty()) {
+            Toast.makeText(this, "No playlists to manage", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val playlistNames = playlists.map { it.name }.toTypedArray()
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.manage_playlists)
+            .setItems(playlistNames) { _, which ->
+                showPlaylistOptionsDialog(playlists[which])
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun showPlaylistOptionsDialog(playlist: Playlist) {
+        val options = arrayOf(getString(R.string.rename), getString(R.string.delete))
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(playlist.name)
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showRenamePlaylistDialog(playlist)
+                    1 -> showDeletePlaylistDialog(playlist)
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun showRenamePlaylistDialog(playlist: Playlist) {
+        val editText = EditText(this).apply {
+            setText(playlist.name)
+            selectAll()
+            setPadding(64, 32, 64, 32)
+        }
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.rename_playlist)
+            .setView(editText)
+            .setPositiveButton(R.string.rename) { _, _ ->
+                val newName = editText.text.toString().trim()
+                if (newName.isNotEmpty() && newName != playlist.name) {
+                    val success = playlistManager.updatePlaylistName(playlist.id, newName)
+                    if (success) {
+                        Toast.makeText(this, R.string.playlist_renamed, Toast.LENGTH_SHORT).show()
+                        // Update UI if this is the current playlist
+                        if (currentPlaylist?.id == playlist.id) {
+                            currentPlaylist = currentPlaylist?.copy(name = newName)
+                            updateCurrentPlaylistTitle()
+                        }
+                    }
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun showDeletePlaylistDialog(playlist: Playlist) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.delete_playlist)
+            .setMessage("Delete \"${playlist.name}\"?")
+            .setPositiveButton(R.string.delete) { _, _ ->
+                val success = playlistManager.deletePlaylist(playlist.id)
+                if (success) {
+                    Toast.makeText(this, R.string.playlist_deleted, Toast.LENGTH_SHORT).show()
+                    // If we deleted the current playlist, switch to "All Songs"
+                    if (currentPlaylist?.id == playlist.id) {
+                        switchToPlaylist(Playlist.createAllSongsPlaylist())
+                    }
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun switchToPlaylist(playlist: Playlist) {
+        currentPlaylist = playlist
+        updateCurrentPlaylistTitle()
+        refreshSongList()
+    }
+
+    private fun updateCurrentPlaylistTitle() {
+        binding.currentPlaylistTitle.text = currentPlaylist?.name ?: getString(R.string.your_playlist)
+    }
+
+    private fun refreshSongList() {
+        currentPlaylist?.let { playlist ->
+            val playlistSongs = playlistManager.getPlaylistSongs(playlist.id, songs)
+            sortAndDisplaySongs(playlistSongs)
+        }
+    }
+
     private fun getCurrentSongList(): List<Song> {
-        return if (shuffleMode) shuffledSongs else songs
+        val currentSongs = currentPlaylist?.let { playlist ->
+            playlistManager.getPlaylistSongs(playlist.id, songs)
+        } ?: songs
+        
+        return if (shuffleMode) {
+            if (shuffledSongs.isEmpty()) {
+                currentSongs.shuffled().also { shuffledSongs = it }
+            } else {
+                shuffledSongs
+            }
+        } else {
+            currentSongs
+        }
     }
 }

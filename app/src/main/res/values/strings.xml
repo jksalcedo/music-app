@@ -16,4 +16,24 @@
     <string name="sort_by_album">Sort by Album</string>
     <string name="sort_by_duration">Sort by Duration</string>
     <string name="song_title">Song Title</string>
+    <string name="playlists">Playlists</string>
+    <string name="create_playlist">Create Playlist</string>
+    <string name="playlist_name">Playlist Name</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="add_to_playlist">Add to Playlist</string>
+    <string name="remove_from_playlist">Remove from Playlist</string>
+    <string name="select_playlist">Select Playlist</string>
+    <string name="manage_playlists">Manage Playlists</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="new_name">New Name</string>
+    <string name="rename_playlist">Rename Playlist</string>
+    <string name="playlist_created">Playlist created</string>
+    <string name="playlist_deleted">Playlist deleted</string>
+    <string name="playlist_renamed">Playlist renamed</string>
+    <string name="song_added_to_playlist">Song added to playlist</string>
+    <string name="song_removed_from_playlist">Song removed from playlist</string>
+    <string name="enter_playlist_name">Enter playlist name</string>
 </resources>
