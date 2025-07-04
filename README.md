@@ -2,7 +2,7 @@
 
 ## Description
 
-This Android application allows users to play locally stored music files on their devices. It provides a clean user interface to browse and manage playlists, control playback, and enjoy music with a persistent notification player. The app focuses on simplicity and a good user experience for offline music listening.
+This Android application allows users to play locally stored music files on their devices. It provides a clean user interface to browse songs, control playback, and enjoy music with a persistent notification player. The app focuses on simplicity and a good user experience for offline music listening.
 
 ## Features
 
