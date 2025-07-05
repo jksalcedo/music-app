@@ -36,4 +36,5 @@
     <string name="song_added_to_playlist">Song added to playlist</string>
     <string name="song_removed_from_playlist">Song removed from playlist</string>
     <string name="enter_playlist_name">Enter playlist name</string>
+    <string name="all_songs">All Songs</string>
 </resources>

@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipToPadding="false"
-            app:layout_constraintBottom_toTopOf="@+id/playerCard"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -90,6 +90,19 @@
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+        <!-- Bottom Navigation -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/card_background"
+            app:menu="@menu/bottom_nav_menu"
+            app:itemIconTint="@color/text_primary"
+            app:itemTextColor="@color/text_primary"
+            app:layout_constraintBottom_toTopOf="@+id/playerCard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Persistent Bottom Player -->
         <com.sinaseyfi.advancedcardview.AdvancedCardView
@@ -248,7 +261,7 @@
             app:srcCompat="@drawable/ic_add"
             app:backgroundTint="@color/secondary"
             app:tint="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/playerCard"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

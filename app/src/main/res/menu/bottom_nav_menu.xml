@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home"
-        android:title="Home"/>
+        android:id="@+id/navigation_all_songs"
+        android:icon="@drawable/ic_music_note"
+        android:title="All Songs"/>
     <item
-        android:id="@+id/navigation_library"
-        android:icon="@drawable/ic_library_music"
-        android:title="Library"/>
-    <item
-        android:id="@+id/navigation_search"
-        android:icon="@drawable/ic_search"
-        android:title="Search"/>
+        android:id="@+id/navigation_playlists"
+        android:icon="@drawable/ic_playlist_play"
+        android:title="Playlists"/>
 </menu> 
