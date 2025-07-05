@@ -125,6 +125,10 @@ class MainActivity : AppCompatActivity() {
         bindMusicService()
         checkPermissionsAndLoadSongs()
         updateRepeatShuffleButton()
+        
+        // Initialize with All Songs view
+        binding.bottomNavigation.selectedItemId = R.id.navigation_all_songs
+        showAllSongsView()
     }
 
     override fun onDestroy() {
@@ -560,6 +564,10 @@ class MainActivity : AppCompatActivity() {
                 if (name.isNotEmpty()) {
                     val playlist = playlistManager.createPlaylist(name)
                     Toast.makeText(this, R.string.playlist_created, Toast.LENGTH_SHORT).show()
+                    // Refresh playlists view if currently showing
+                    if (isShowingPlaylists) {
+                        playlistAdapter.updatePlaylists(playlistManager.playlists)
+                    }
                 }
             }
             .setNegativeButton(R.string.cancel, null)
@@ -641,6 +649,10 @@ class MainActivity : AppCompatActivity() {
                             currentPlaylist = currentPlaylist?.copy(name = newName)
                             updateCurrentPlaylistTitle()
                         }
+                        // Refresh playlists view if currently showing
+                        if (isShowingPlaylists) {
+                            playlistAdapter.updatePlaylists(playlistManager.playlists)
+                        }
                     }
                 }
             }
@@ -659,6 +671,10 @@ class MainActivity : AppCompatActivity() {
                     // If we deleted the current playlist, switch to "All Songs"
                     if (currentPlaylist?.id == playlist.id) {
                         switchToPlaylist(Playlist.createAllSongsPlaylist())
+                    }
+                    // Refresh playlists view if currently showing
+                    if (isShowingPlaylists) {
+                        playlistAdapter.updatePlaylists(playlistManager.playlists)
                     }
                 }
             }
@@ -709,9 +725,8 @@ class MainActivity : AppCompatActivity() {
         binding.sortButton.visibility = View.VISIBLE
         binding.createPlaylistFab.visibility = View.GONE
         
-        // Refresh the songs
-        val currentSongs = getCurrentSongList()
-        songAdapter.updateSongs(currentSongs)
+        // Refresh the songs using existing sort logic
+        sortAndDisplaySongs()
     }
     
     private fun showPlaylistsView() {
