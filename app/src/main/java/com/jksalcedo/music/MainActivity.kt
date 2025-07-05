@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jksalcedo.music.adapter.SongAdapter
+import com.jksalcedo.music.adapter.PlaylistAdapter
 import com.jksalcedo.music.databinding.ActivityMainBinding
 import com.jksalcedo.music.model.Song
 import com.jksalcedo.music.model.Playlist
@@ -32,6 +33,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var songAdapter: SongAdapter
+    private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var playlistManager: PlaylistManager
     private var musicService: MusicService? = null
     private var currentSong: Song? = null
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var currentPlaylist: Playlist? = null
     private var currentSongIndex = -1
     private var isPlaylistMode = false
+    private var isShowingPlaylists = false // Track current bottom nav view
     private val handler = Handler(Looper.getMainLooper())
     private val updateProgressRunnable = object : Runnable {
         override fun run() {
@@ -141,9 +144,23 @@ class MainActivity : AppCompatActivity() {
                 showAddToPlaylistDialog(song)
             }
         )
+        
+        playlistAdapter = PlaylistAdapter(
+            playlists = playlistManager.playlists,
+            onPlaylistClick = { playlist ->
+                switchToPlaylist(playlist)
+                // Switch back to All Songs view after selecting a playlist
+                binding.bottomNavigation.selectedItemId = R.id.navigation_all_songs
+                showAllSongsView()
+            },
+            onPlaylistOptionsClick = { playlist ->
+                showPlaylistOptionsDialog(playlist)
+            }
+        )
+        
         binding.playlistRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = songAdapter
+            adapter = songAdapter // Start with songs view
         }
     }
 
@@ -181,6 +198,21 @@ class MainActivity : AppCompatActivity() {
 
         binding.createPlaylistFab.setOnClickListener {
             showCreatePlaylistDialog()
+        }
+        
+        // Bottom Navigation
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_all_songs -> {
+                    showAllSongsView()
+                    true
+                }
+                R.id.navigation_playlists -> {
+                    showPlaylistsView()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -665,5 +697,34 @@ class MainActivity : AppCompatActivity() {
         } else {
             currentSongs
         }
+    }
+    
+    private fun showAllSongsView() {
+        isShowingPlaylists = false
+        binding.playlistRecyclerView.adapter = songAdapter
+        
+        // Update UI elements visibility/text
+        binding.currentPlaylistTitle.text = currentPlaylist?.name ?: getString(R.string.all_songs)
+        binding.playlistsButton.visibility = View.VISIBLE
+        binding.sortButton.visibility = View.VISIBLE
+        binding.createPlaylistFab.visibility = View.GONE
+        
+        // Refresh the songs
+        val currentSongs = getCurrentSongList()
+        songAdapter.updateSongs(currentSongs)
+    }
+    
+    private fun showPlaylistsView() {
+        isShowingPlaylists = true
+        binding.playlistRecyclerView.adapter = playlistAdapter
+        
+        // Update UI elements visibility/text
+        binding.currentPlaylistTitle.text = getString(R.string.playlists)
+        binding.playlistsButton.visibility = View.GONE
+        binding.sortButton.visibility = View.GONE
+        binding.createPlaylistFab.visibility = View.VISIBLE
+        
+        // Refresh the playlists
+        playlistAdapter.updatePlaylists(playlistManager.playlists)
     }
 }
